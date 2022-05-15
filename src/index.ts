@@ -1,7 +1,7 @@
 import express from 'express'
 import 'reflect-metadata'
-import { initializeRouters } from './routes'
-import database from './util/connection'
+import initializeRouters from './api/v1'
+import database from './connection'
 const port = 3000
 
 const main = async () => {
