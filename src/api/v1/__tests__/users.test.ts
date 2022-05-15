@@ -8,9 +8,8 @@ describe('User Endpoints', () => {
         await database.initalize()
         initializeRouters(app)
     })
-    it('GET /api/v1/user should show all users', async () => {
-        await supertest(app).get('/api/v1/users/getUsers').expect(200)
-        // expect(true).toBe(true)
+    it('GET /api/v1/users/getUsers', async () => {
+        const res = await supertest(app).get('/api/v1/users/getUsers').expect(200)
     })
 
     afterAll(async () => {
