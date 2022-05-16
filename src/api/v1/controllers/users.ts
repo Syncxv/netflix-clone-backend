@@ -48,6 +48,7 @@ export const register = async (
     const hash = await argon2.hash(password)
     const user = database.connection.manager.create(User, {
         username: username,
+        email,
         password: hash
     })
     await database.connection.manager.save(user)
