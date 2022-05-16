@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class User {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn('increment')
     id: number
 
     @Column()
