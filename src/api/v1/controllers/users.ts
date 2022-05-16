@@ -17,11 +17,24 @@ export const register = async (req: Request<any, any, { username?: string; passw
         })
     }
     const { username, password } = req.body
-    if (username.length <= 3) {
+    if (username.length < 3) {
         return res.status(400).send({
             errors: [{ message: 'username is too short' }]
         })
     }
+    if (password.length <= 6) {
+        return res.status(400).send({
+            errors: [{ message: 'password is too short' }]
+        })
+    }
+
+    const dupUser = await database.connection.manager.findBy(User, { username })
+    if (dupUser) {
+        return res.status(400).send({
+            errors: [{ message: 'username already exists :P' }]
+        })
+    }
+
     const hash = await argon2.hash(password)
     const user = database.connection.manager.create(User, {
         username: username,
