@@ -10,13 +10,16 @@ export const getUsers = async (_req: Request, res: Response) => {
 
 export const login = async (_req: Request, _res: Response) => {}
 
-export const register = async (req: Request<any, any, { username?: string; password?: string }>, res: Response) => {
-    if (!req.body.username || !req.body.password) {
+export const register = async (
+    req: Request<any, any, { username?: string; email: string; password?: string }>,
+    res: Response
+) => {
+    if (!req.body.username || !req.body.password || !req.body.email) {
         return res.status(400).send({
-            errors: [{ message: 'username or password wasnt provided bruv' }]
+            errors: [{ message: 'username, email or password wasnt provided bruv' }]
         })
     }
-    const { username, password } = req.body
+    const { username, email, password } = req.body
     if (username.length < 3) {
         return res.status(400).send({
             errors: [{ message: 'username is too short' }]
@@ -28,10 +31,17 @@ export const register = async (req: Request<any, any, { username?: string; passw
         })
     }
 
-    const dupUser = await database.connection.manager.findBy(User, { username })
-    if (dupUser) {
+    const dupUsername = await database.connection.manager.findBy(User, { username })
+    if (dupUsername) {
         return res.status(400).send({
             errors: [{ message: 'username already exists :P' }]
+        })
+    }
+
+    const dupUserEmail = await database.connection.manager.findBy(User, { email })
+    if (dupUserEmail) {
+        return res.status(400).send({
+            errors: [{ message: 'email is already taken :P' }]
         })
     }
 
