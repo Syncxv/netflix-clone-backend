@@ -5,8 +5,10 @@ import express from 'express'
 import supertest from 'supertest'
 import { initializeRouters } from '../routes'
 import database from '../connection'
+import { User } from '../entities/User'
 
 describe('User Endpoints', () => {
+    const username = `test-user-${Math.floor(Math.random() * 100000000000)}`
     it('initalize stuff', async () => {
         app.use(express.json())
         await database.initalize()
@@ -44,7 +46,7 @@ describe('User Endpoints', () => {
             })
         })
 
-        describe('given username already exists is too short', () => {
+        describe('given username already exists', () => {
             it('should return status 400 and return errors array', async () => {
                 const { body, statusCode } = await supertest(app)
                     .post('/api/v1/users/register')
@@ -53,9 +55,20 @@ describe('User Endpoints', () => {
                 expect(body).toHaveProperty('errors')
             })
         })
+
+        describe('given the correct data', () => {
+            it('should return user object and access token', async () => {
+                const { body, statusCode } = await supertest(app)
+                    .post('/api/v1/users/register')
+                    .send({ username, password: 'hehe' })
+                expect(statusCode).toBe(400)
+                expect(body).toHaveProperty('errors')
+            })
+        })
     })
 
     afterAll(async () => {
+        await database.connection.manager.delete(User, { username })
         await database.connection.destroy()
     })
 })

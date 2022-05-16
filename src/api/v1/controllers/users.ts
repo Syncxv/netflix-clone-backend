@@ -40,7 +40,7 @@ export const register = async (req: Request<any, any, { username?: string; passw
         username: username,
         password: hash
     })
-    database.connection.manager.save(user)
+    await database.connection.manager.save(user)
 
     return res.send({
         user,
