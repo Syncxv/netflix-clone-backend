@@ -63,13 +63,24 @@ describe('User Endpoints', () => {
                 const { body, statusCode } = await supertest(app)
                     .post('/api/v1/users/register')
                     .send({ username: registerUsername, email: registerEmail, password: 'hehe' })
-                expect(statusCode).toBe(400)
-                expect(body).toHaveProperty('errors')
+                expect(statusCode).toBe(201)
+                expect(body).toHaveProperty('user')
+                expect(body).toHaveProperty('accessToken')
             })
         })
     })
 
-    // describe('login route /api/v1/users/login', () => {})
+    describe('login route /api/v1/users/login', () => {
+        describe('user enters a email that does not exist', () => {
+            it('should return status 404 and return errors array', async () => {
+                const { body, statusCode } = await supertest(app)
+                    .post('/api/v1/users/login')
+                    .send({ email: '', password: 'hehe' })
+                expect(statusCode).toBe(404)
+                expect(body).toHaveProperty('errors')
+            })
+        })
+    })
 
     afterAll(async () => {
         await database.connection.manager.delete(User, { username: registerUsername })

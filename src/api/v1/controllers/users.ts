@@ -8,7 +8,29 @@ export const getUsers = async (_req: Request, res: Response) => {
     res.send({ users: await database.connection.manager.find(User) })
 }
 
-export const login = async (_req: Request, _res: Response) => {}
+export const login = async (req: Request<any, any, { email: string; password: string }>, res: Response) => {
+    const { email, password } = req.body
+
+    const user = await database.connection.manager.findOneBy(User, { email })
+
+    if (!user) {
+        return res.status(404).send({
+            errors: [{ message: 'account not found EMAIL IS WRONG' }]
+        })
+    }
+    console.log(user.password)
+    const valid = await argon2.verify(user.password, password)
+    if (!valid) {
+        return res.status(404).send({
+            errors: [{ message: 'password is wrong' }]
+        })
+    }
+
+    return res.status(200).send({
+        user,
+        accessToken: createAcessToken(user)
+    })
+}
 
 export const register = async (
     req: Request<any, any, { username?: string; email: string; password?: string }>,
@@ -31,14 +53,14 @@ export const register = async (
         })
     }
 
-    const dupUsername = await database.connection.manager.findBy(User, { username })
+    const dupUsername = await database.connection.manager.findOneBy(User, { username })
     if (dupUsername) {
         return res.status(400).send({
             errors: [{ message: 'username already exists :P' }]
         })
     }
 
-    const dupUserEmail = await database.connection.manager.findBy(User, { email })
+    const dupUserEmail = await database.connection.manager.findOneBy(User, { email })
     if (dupUserEmail) {
         return res.status(400).send({
             errors: [{ message: 'email is already taken :P' }]
@@ -53,7 +75,7 @@ export const register = async (
     })
     await database.connection.manager.save(user)
 
-    return res.send({
+    return res.status(201).send({
         user,
         accessToken: createAcessToken(user)
     })
