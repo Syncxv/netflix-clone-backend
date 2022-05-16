@@ -75,9 +75,30 @@ describe('User Endpoints', () => {
             it('should return status 404 and return errors array', async () => {
                 const { body, statusCode } = await supertest(app)
                     .post('/api/v1/users/login')
-                    .send({ email: '', password: 'hehe' })
+                    .send({ email: 'randoemailzzzzzzzzzzz@gmail.com', password: 'hehe' })
                 expect(statusCode).toBe(404)
                 expect(body).toHaveProperty('errors')
+            })
+        })
+
+        describe('when user enters the wrong password', () => {
+            it('should return status 403 and return errors array', async () => {
+                const { body, statusCode } = await supertest(app)
+                    .post('/api/v1/users/login')
+                    .send({ email: 'dave2@gmail.com', password: 'HEHEHHEHA' })
+                expect(statusCode).toBe(403)
+                expect(body).toHaveProperty('errors')
+            })
+        })
+
+        describe('when email and password are both correct', () => {
+            it('should return user object and access token', async () => {
+                const { body, statusCode } = await supertest(app)
+                    .post('/api/v1/users/login')
+                    .send({ email: 'dave2@gmail.com', password: '123456789' })
+                expect(statusCode).toBe(200)
+                expect(body).toHaveProperty('user')
+                expect(body).toHaveProperty('accessToken')
             })
         })
     })

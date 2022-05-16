@@ -24,7 +24,7 @@ export const login = async (req: Request<any, any, { email: string; password: st
     console.log(user.password)
     const valid = await argon2.verify(user.password, password)
     if (!valid) {
-        return res.status(404).send({
+        return res.status(403).send({
             errors: [{ message: 'password is wrong' }]
         })
     }
