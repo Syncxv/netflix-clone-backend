@@ -6,7 +6,7 @@ const tryCatch = (fn: Function) => {
             fn(req, res)
         } catch (err) {
             console.error(err)
-            res.send({ errors: [{ message: 'SERVER ERROR whoopsie' }] })
+            res.status(500).send({ errors: [{ message: 'SERVER ERROR whoopsie' }] })
         }
     }
 }
