@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 
 const tryCatch = (fn: Function) => {
-    return (req: Request, res: Response) => {
+    return async (req: Request, res: Response) => {
         try {
-            fn(req, res)
+            await fn(req, res)
         } catch (err) {
             console.error(err)
             res.status(500).send({ errors: [{ message: 'SERVER ERROR whoopsie' }] })
