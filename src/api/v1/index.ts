@@ -7,6 +7,7 @@ const port = 3000
 export const app = express()
 
 const apiV1Main = async () => {
+    app.use(express.json())
     await database.initalize()
     initializeRouters(app)
     app.get('/', (_, res) => {
