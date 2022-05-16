@@ -62,7 +62,7 @@ describe('User Endpoints', () => {
             it('should return user object and access token', async () => {
                 const { body, statusCode } = await supertest(app)
                     .post('/api/v1/users/register')
-                    .send({ username: registerUsername, email: registerEmail, password: 'hehe' })
+                    .send({ username: registerUsername, email: registerEmail, password: '123456789' })
                 expect(statusCode).toBe(201)
                 expect(body).toHaveProperty('user')
                 expect(body).toHaveProperty('accessToken')

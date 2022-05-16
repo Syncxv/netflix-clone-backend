@@ -11,7 +11,10 @@ export const getUsers = async (_req: Request, res: Response) => {
 export const login = async (req: Request<any, any, { email: string; password: string }>, res: Response) => {
     const { email, password } = req.body
 
-    const user = await database.connection.manager.findOneBy(User, { email })
+    const user = await database.connection.manager.findOne(User, {
+        where: { email },
+        select: ['password', 'email', 'id', 'username', 'createdAt', 'updatedAt']
+    })
 
     if (!user) {
         return res.status(404).send({
@@ -27,7 +30,10 @@ export const login = async (req: Request<any, any, { email: string; password: st
     }
 
     return res.status(200).send({
-        user,
+        user: {
+            ...user,
+            password: undefined
+        },
         accessToken: createAcessToken(user)
     })
 }
